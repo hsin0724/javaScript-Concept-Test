@@ -188,91 +188,42 @@ const orderData = {
     'T04': { name: 'D', price: 799 },
 };
 
-function dataTransformer(userIds, orderIds, userOrders, userData, orderData){
+function dataTransformer(userIds, userOrders, userData, orderData){
 
+    let result = [];
 
-    // 定義常數內容
-
-    
-    let orders = [];
-    let userArr = [];
-    let orderArr = [];
-    let ordersArr = [];
-
-    // 抓取資料
+    // 每一個 user 
     for(let i = 0; i < userIds.length; i++){
 
         let user = {};
+        let orders = [];
 
         user.id = userIds[i];
         user.name = userData[user.id];
 
-        userArr.push(user);
+        let filteredOrders = userOrders.filter(d => d.userId === user.id); //[{ userId: 'U01', orderIds: ['T01', 'T02'] }]
+        filteredOrders = filteredOrders[0].orderIds; // U01 => ["T01","T02"]
+
+        // 此 user 的每一個 order
+        for (let j = 0; j < filteredOrders.length; j++){
+
+        	let order = {};
+            order.id = filteredOrders[j];
+            order.name = orderData[order.id].name;
+            order.price = orderData[order.id].price;
+            orders.push(order);
+           
+        };
+
+        result.push({orders, user});
         
     }
 
-    for(let j = 0; j < orderIds.length; j++){
-
-        let order = {};
-
-        order.id = orderIds[j];
-        order.name = orderData[order.id].name;
-        order.price = orderData[order.id].price;
-
-        orderArr.push(order);
-        /*
-        orderArr = [
-            { id: "T01", name: "A", price: 499 }, 
-            { id: "T02", name: "B", price: 599 }, 
-            { id: "T03", name: "C", price: 699 }, 
-            { id: "T04", name: "D", price: 799 }
-        ]
-        */
-    }
-
-    const userOrdersIds = userOrders.map(({orderIds}) => orderIds);
-    console.log(userOrdersIds); // [["T01", "T02"], [], ["T03"]]
-
-    for(let k = 0; k < userOrdersIds.length; k++) { 
-
-        
-
-    }
-
-
-
-    // for (let k = 0; k < userOrders.length; k++){
-
-    //     if(userOrders[k].orderIds == null){
-    //         ordersArr.push([]);
-    //         continue;
-    //     }
-
-    //     for(let i = 0; i < orderArr.length; i++){
-
-    //          if(userOrders[k].orderIds == orderArr[i].id){
-
-    //             let order = {};
-    //             ordersArr.push(order);
-
-    //         }
-    //     }
-    // }
-
-   
-
-
-
-    console.log(userArr);
-    console.log(orderArr);
-    console.log(ordersArr);
-
-
-
+    return result;
 }
 
-dataTransformer(userIds, orderIds, userOrders, userData, orderData);
-
+result = dataTransformer(userIds, userOrders, userData, orderData);
+console.log(result);
 
 
 //--------------------------------------------------------------
